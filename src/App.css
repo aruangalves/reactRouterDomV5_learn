@@ -27,9 +27,22 @@
   }
 }
 
+@keyframes logo-reverse-spin {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
+  .logo.react {
     animation: logo-spin infinite 20s linear;
+  }
+
+  .logo.react.reverse{
+    animation: logo-reverse-spin infinite 20s linear;
   }
 }
 
