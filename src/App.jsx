@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import props from 'prop-types';
+import { useState, useEffect, memo, useCallback } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -11,14 +12,34 @@ import './App.css'
  * 2. Only call Hooks from React functions (React function components or from custom Hooks)
  */
 
+const Button = memo (({incrementFn}) => {
+  //console.log('Btn render');
+  //After removing the count2 dependency, this function must render only once, meaning the console message is also displayed only once after initial render
+  return <button type='button' onClick={() => incrementFn(5)}>+</button>
+})
+
+Button.propTypes = {
+  incrementFn: props.func,
+}
+
 const eventFn = () => {
   console.log('Element H1 was clicked.');
 };
 
 function App() {
   const [count, setCount] = useState(0);
+  const [count2, setCount2] = useState(0);
   const [reverse, setReverse] = useState(false);
   const rev = reverse ? 'reverse' : '';
+
+  const incrementCounter = useCallback((incAmount = 1) => {
+    //Used to be: setCount2((count2) => count2 + incAmount);
+    //But this adds count2 as a dependency, meaning this function is changing on every count2 value update. Changing to a generic 'c' variable eliminates this dependency and the function no longer is refreshed
+    setCount2((c) => c + incAmount);
+  },[]);
+
+  //This signify an App update:
+  //console.log('App render');
 
   //Mimicking the behavior of componentDidUpdate
   useEffect(() =>{
@@ -76,6 +97,8 @@ function App() {
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
+        <Button incrementFn={incrementCounter} />
+        <p>Counter #2 value is: {count2}</p>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
