@@ -1,8 +1,8 @@
 import props from 'prop-types';
-import { useState, useEffect, memo, useCallback, useMemo } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
 
 /**RULES OF HOOKS
  * 1. Only call Hooks at the top level
@@ -22,10 +22,10 @@ Button.propTypes = {
   incrementFn: props.func,
 }
 
-const Post = ({post}) => {
+const Post = ({post, handleClick}) => {
   return (
     <div key={post.id} className='post'>
-      <h3>{post.title}</h3>
+      <h3 onClick={() => handleClick(post.title)}>{post.title}</h3>
       <hr />
       <p>{post.body}</p>
     </div>
@@ -37,7 +37,8 @@ Post.propTypes = {
     id: props.number,
     title: props.string,
     body: props.string,
-  })
+  }),
+  handleClick: props.func,
 }
 
 const eventFn = () => {
@@ -51,6 +52,9 @@ function App() {
 
   const [posts, setPosts] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const searchInput = useRef(null);
+  const renderCounter = useRef(0);
+  //note that changing the value associated with useRef doesn't trigger another component rendering pass
 
   const rev = reverse ? 'reverse' : '';
 
@@ -62,7 +66,7 @@ function App() {
   },[]);
 
   //This signify an App update:
-  console.log('App render');
+  //console.log('App render');
 
   //Mimicking the behavior of componentDidUpdate
   useEffect(() =>{
@@ -110,19 +114,30 @@ function App() {
 
   //Another useMemo example:
   useEffect(() =>{
-    setTimeout(()=>{
-      fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(response => response.json())
-      .then(posts => setPosts(posts));
-    }, 2000);
-
+    fetch('https://jsonplaceholder.typicode.com/posts')
+    .then(response => response.json())
+    .then(posts => setPosts(posts));
   }, []);
+
+  useEffect(() =>{
+    searchInput.current.focus();
+  },[searchValue]);
+
+  useEffect(() =>{
+    renderCounter.current++;
+  });
 
   //After you type on the search bar, without useMemo, the entire page would be re-rendered. With useMemo, React will check if the component state was updated. If not, then they're not rendered again
   //useMemo saves the Component state, useCallback saves the function state to avoid rendering the page again
+  const handlePostClick = (value) =>{
+    setSearchValue(value);
+  };
+
   const renderedPosts = useMemo(() =>{
-    return posts.length > 0 && posts.map(post => (<Post key={post.id} post={post} />));
+    return posts.length > 0 && posts.map(post => (<Post key={post.id} post={post} handleClick={handlePostClick} />));
   },[posts]);
+
+
 
   return (
     <>
@@ -136,6 +151,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
+        <h1>App was rendered {renderCounter.current} times.</h1>
         <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
@@ -144,7 +160,7 @@ function App() {
         <p>Counter #2 value is: {count2}</p>
         <h2>Another useMemo example:</h2>
         <p>
-          <input type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
+          <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
         </p>
         <div className='post-container'>
           {renderedPosts}
