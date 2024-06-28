@@ -53,3 +53,20 @@
 .read-the-docs {
   color: #888;
 }
+
+.post {
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.post-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.post > hr{
+  border: 1px solid darkcyan;
+}

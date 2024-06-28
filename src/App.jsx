@@ -1,5 +1,5 @@
 import props from 'prop-types';
-import { useState, useEffect, memo, useCallback } from 'react'
+import { useState, useEffect, memo, useCallback, useMemo } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -12,14 +12,32 @@ import './App.css'
  * 2. Only call Hooks from React functions (React function components or from custom Hooks)
  */
 
-const Button = memo (({incrementFn}) => {
+const Button = ({incrementFn}) => {
   //console.log('Btn render');
   //After removing the count2 dependency, this function must render only once, meaning the console message is also displayed only once after initial render
   return <button type='button' onClick={() => incrementFn(5)}>+</button>
-})
+}
 
 Button.propTypes = {
   incrementFn: props.func,
+}
+
+const Post = ({post}) => {
+  return (
+    <div key={post.id} className='post'>
+      <h3>{post.title}</h3>
+      <hr />
+      <p>{post.body}</p>
+    </div>
+  );
+}
+
+Post.propTypes = {
+  post: props.shape({
+    id: props.number,
+    title: props.string,
+    body: props.string,
+  })
 }
 
 const eventFn = () => {
@@ -30,8 +48,13 @@ function App() {
   const [count, setCount] = useState(0);
   const [count2, setCount2] = useState(0);
   const [reverse, setReverse] = useState(false);
+
+  const [posts, setPosts] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+
   const rev = reverse ? 'reverse' : '';
 
+  //UseCallback is useful for 'caching' functions that do not change
   const incrementCounter = useCallback((incAmount = 1) => {
     //Used to be: setCount2((count2) => count2 + incAmount);
     //But this adds count2 as a dependency, meaning this function is changing on every count2 value update. Changing to a generic 'c' variable eliminates this dependency and the function no longer is refreshed
@@ -39,7 +62,7 @@ function App() {
   },[]);
 
   //This signify an App update:
-  //console.log('App render');
+  console.log('App render');
 
   //Mimicking the behavior of componentDidUpdate
   useEffect(() =>{
@@ -81,6 +104,26 @@ function App() {
     setCount((prevCount) => prevCount + 1);
   }
 
+  const incBtn = useMemo(() =>{
+    return <Button incrementFn={incrementCounter} />
+  },[incrementCounter]);
+
+  //Another useMemo example:
+  useEffect(() =>{
+    setTimeout(()=>{
+      fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(response => response.json())
+      .then(posts => setPosts(posts));
+    }, 2000);
+
+  }, []);
+
+  //After you type on the search bar, without useMemo, the entire page would be re-rendered. With useMemo, React will check if the component state was updated. If not, then they're not rendered again
+  //useMemo saves the Component state, useCallback saves the function state to avoid rendering the page again
+  const renderedPosts = useMemo(() =>{
+    return posts.length > 0 && posts.map(post => (<Post key={post.id} post={post} />));
+  },[posts]);
+
   return (
     <>
       <div>
@@ -97,8 +140,20 @@ function App() {
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
-        <Button incrementFn={incrementCounter} />
+        {incBtn}
         <p>Counter #2 value is: {count2}</p>
+        <h2>Another useMemo example:</h2>
+        <p>
+          <input type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
+        </p>
+        <div className='post-container'>
+          {renderedPosts}
+        </div>
+        {posts.length === 0 &&
+          <div className='post'>
+            <p>Ainda não existem posts</p>
+          </div>
+          }
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
