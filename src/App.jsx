@@ -10,6 +10,7 @@ import { Div } from './components/Div';
 import { Header1 } from './components/Header1';
 import { Paragraph } from './components/Paragraph';
 import { ChangeButton, InvertButton } from './components/SomeButton';
+import { TitleChanger } from './components/TitleChanger';
 
 
 
@@ -167,6 +168,7 @@ function App() {
           <h1>App was rendered {renderCounter.current} times.</h1>
           <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
           <Paragraph />
+          <TitleChanger />
           {incBtn}
           <ChangeButton />
           <InvertButton />
