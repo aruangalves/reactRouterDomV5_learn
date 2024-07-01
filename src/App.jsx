@@ -9,6 +9,7 @@ import { AppContext } from './contexts/AppContext';
 import { Div } from './components/Div';
 import { Header1 } from './components/Header1';
 import { Paragraph } from './components/Paragraph';
+import { ChangeButton, InvertButton } from './components/SomeButton';
 
 
 
@@ -167,6 +168,8 @@ function App() {
           <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
           <Paragraph />
           {incBtn}
+          <ChangeButton />
+          <InvertButton />
           <p>Counter #2 value is: {count2}</p>
           <h2>Another useMemo example:</h2>
           <p>
