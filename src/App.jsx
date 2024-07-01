@@ -1,5 +1,5 @@
 import props from 'prop-types';
-import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, memo, useCallback, useMemo, useRef, useContext, createContext } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
@@ -11,6 +11,37 @@ import './App.css';
  * 1.3. DO NOT: call Hooks inside conditions or loops, after a conditional return statement, in event handlers, in class components, inside functions passed to useMemo, useReducer or useEffect, inside try/catch/finally blocks
  * 2. Only call Hooks from React functions (React function components or from custom Hooks)
  */
+
+/**USECONTEXT REACT HOOK */
+const globalState = {
+  title: 'React Hooks Classes #',
+  body: 'Edit and save to test HMR',
+  counter: 1,
+};
+
+const GlobalContext = createContext();
+
+const Div = ({children}) => {
+  return (<div className='App'>{children}</div>);
+};
+
+const Header1 = ({children}) => {
+  const context = useContext(GlobalContext);
+  const { contextState: {title, counter} } = context;
+  return (<h1>{title}{counter}</h1>);
+};
+
+const Paragraph = () =>{
+  const context = useContext(GlobalContext);
+  const {
+    contextState: {body, counter},
+    contextState,
+    setContext
+  } = context;
+  const bodyStart = body.substring(0, 5);
+  const bodyEnd = body.substring(4);
+  return (<p onClick={() => setContext(s => ({...s, counter: s.counter + 1}))}>{bodyStart}<code>src/App.jsx</code>{bodyEnd}</p>);
+};
 
 const Button = ({incrementFn}) => {
   //console.log('Btn render');
@@ -55,6 +86,8 @@ function App() {
   const searchInput = useRef(null);
   const renderCounter = useRef(0);
   //note that changing the value associated with useRef doesn't trigger another component rendering pass
+
+  const [contextState, setContext] = useState(globalState);
 
   const rev = reverse ? 'reverse' : '';
 
@@ -139,42 +172,45 @@ function App() {
 
 
 
+
+
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className={`logo react ${rev}`} alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <h1>App was rendered {renderCounter.current} times.</h1>
-        <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        {incBtn}
-        <p>Counter #2 value is: {count2}</p>
-        <h2>Another useMemo example:</h2>
-        <p>
-          <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
-        </p>
-        <div className='post-container'>
-          {renderedPosts}
+    <GlobalContext.Provider value={{contextState, setContext}}>
+      <Div>
+        <div>
+          <Header1 />
+          <a href="https://vitejs.dev" target="_blank">
+            <img src={viteLogo} className="logo" alt="Vite logo" />
+          </a>
+          <a href="https://react.dev" target="_blank">
+            <img src={reactLogo} className={`logo react ${rev}`} alt="React logo" />
+          </a>
         </div>
-        {posts.length === 0 &&
-          <div className='post'>
-            <p>Ainda não existem posts</p>
+        <h1>Vite + React</h1>
+        <div className="card">
+          <h1>App was rendered {renderCounter.current} times.</h1>
+          <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
+          <Paragraph />
+          {incBtn}
+          <p>Counter #2 value is: {count2}</p>
+          <h2>Another useMemo example:</h2>
+          <p>
+            <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
+          </p>
+          <div className='post-container'>
+            {renderedPosts}
           </div>
-          }
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+          {posts.length === 0 &&
+            <div className='post'>
+              <p>Ainda não existem posts</p>
+            </div>
+            }
+        </div>
+        <p className="read-the-docs">
+          Click on the Vite and React logos to learn more
+        </p>
+      </Div>
+    </GlobalContext.Provider>
   )
 }
 
