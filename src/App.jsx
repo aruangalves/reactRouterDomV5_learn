@@ -1,8 +1,16 @@
 import props from 'prop-types';
 import { useState, useEffect, memo, useCallback, useMemo, useRef, useContext, createContext } from 'react';
+
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
+
+import { AppContext } from './contexts/AppContext';
+import { Div } from './components/Div';
+import { Header1 } from './components/Header1';
+import { Paragraph } from './components/Paragraph';
+
+
 
 /**RULES OF HOOKS
  * 1. Only call Hooks at the top level
@@ -11,37 +19,6 @@ import './App.css';
  * 1.3. DO NOT: call Hooks inside conditions or loops, after a conditional return statement, in event handlers, in class components, inside functions passed to useMemo, useReducer or useEffect, inside try/catch/finally blocks
  * 2. Only call Hooks from React functions (React function components or from custom Hooks)
  */
-
-/**USECONTEXT REACT HOOK */
-const globalState = {
-  title: 'React Hooks Classes #',
-  body: 'Edit and save to test HMR',
-  counter: 1,
-};
-
-const GlobalContext = createContext();
-
-const Div = ({children}) => {
-  return (<div className='App'>{children}</div>);
-};
-
-const Header1 = ({children}) => {
-  const context = useContext(GlobalContext);
-  const { contextState: {title, counter} } = context;
-  return (<h1>{title}{counter}</h1>);
-};
-
-const Paragraph = () =>{
-  const context = useContext(GlobalContext);
-  const {
-    contextState: {body, counter},
-    contextState,
-    setContext
-  } = context;
-  const bodyStart = body.substring(0, 5);
-  const bodyEnd = body.substring(4);
-  return (<p onClick={() => setContext(s => ({...s, counter: s.counter + 1}))}>{bodyStart}<code>src/App.jsx</code>{bodyEnd}</p>);
-};
 
 const Button = ({incrementFn}) => {
   //console.log('Btn render');
@@ -86,8 +63,6 @@ function App() {
   const searchInput = useRef(null);
   const renderCounter = useRef(0);
   //note that changing the value associated with useRef doesn't trigger another component rendering pass
-
-  const [contextState, setContext] = useState(globalState);
 
   const rev = reverse ? 'reverse' : '';
 
@@ -175,7 +150,7 @@ function App() {
 
 
   return (
-    <GlobalContext.Provider value={{contextState, setContext}}>
+    <AppContext>
       <Div>
         <div>
           <Header1 />
@@ -210,7 +185,7 @@ function App() {
           Click on the Vite and React logos to learn more
         </p>
       </Div>
-    </GlobalContext.Provider>
+    </AppContext>
   )
 }
 
