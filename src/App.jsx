@@ -11,6 +11,7 @@ import { Header1 } from './components/Header1';
 import { Paragraph } from './components/Paragraph';
 import { ChangeButton, InvertButton } from './components/SomeButton';
 import { TitleChanger } from './components/TitleChanger';
+import { useMyHook } from './hooks/useMyHook';
 
 
 
@@ -147,6 +148,27 @@ function App() {
     return posts.length > 0 && posts.map(post => (<Post key={post.id} post={post} handleClick={handlePostClick} />));
   },[posts]);
 
+  //Custom Hooks example
+  const [cInterval, setCInterval] = useState(0);
+  const [delay, setDelay] = useState(1000);
+  const [delayInc, setDelayInc] = useState(100);
+
+  useMyHook(() => setCInterval((c)=> c + 1), delay);
+
+  const handleDelay = (value) =>{
+    if(delay + value >= 0) setDelay(d => d + value);
+  };
+
+  const inputDelay = (value) =>{
+    const no = parseInt(value);
+    if(no){
+      if(no < 0) setDelayInc(-no);
+      else setDelayInc(no);
+
+    }
+    else setDelayInc(0);
+  }
+
 
 
 
@@ -172,6 +194,10 @@ function App() {
           {incBtn}
           <ChangeButton />
           <InvertButton />
+          <h2>Counting {cInterval} at every {delay/1000} seconds</h2>
+          <button type='button' onClick={() => handleDelay(-delayInc)}>Slower</button>
+          <input type='number' value={delayInc} onChange={(e)=>inputDelay(e.target.value)} min='0'></input>
+          <button type='button' onClick={() => handleDelay(delayInc)}>Faster</button>
           <p>Counter #2 value is: {count2}</p>
           <h2>Another useMemo example:</h2>
           <p>
