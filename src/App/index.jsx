@@ -167,9 +167,9 @@ function App() {
           <ChangeButton />
           <InvertButton />
           <h2>Counting {cInterval} at every {delay/1000} seconds</h2>
-          <button type='button' onClick={() => handleDelay(-delayInc)}>Slower</button>
+          <button type='button' onClick={() => handleDelay(delayInc)}>Slower</button>
           <input type='number' value={delayInc} onChange={(e)=>inputDelay(e.target.value)} min='0'></input>
-          <button type='button' onClick={() => handleDelay(delayInc)}>Faster</button>
+          <button type='button' onClick={() => handleDelay(-delayInc)}>Faster</button>
           <p>Counter #2 value is: {count2}</p>
           <h2>Another useMemo example:</h2>
           <p>
