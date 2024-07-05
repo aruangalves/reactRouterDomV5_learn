@@ -1,17 +1,18 @@
-import props from 'prop-types';
 import { useState, useEffect, memo, useCallback, useMemo, useRef, useContext, createContext } from 'react';
 
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-import { AppContext } from './contexts/AppContext';
-import { Div } from './components/Div';
-import { Header1 } from './components/Header1';
-import { Paragraph } from './components/Paragraph';
-import { ChangeButton, InvertButton } from './components/SomeButton';
-import { TitleChanger } from './components/TitleChanger';
-import { useMyHook } from './hooks/useMyHook';
+import { AppContext } from '../contexts/AppContext';
+import { Div } from '../components/Div';
+import { Header1 } from '../components/Header1';
+import { Paragraph } from '../components/Paragraph';
+import { ChangeButton, InvertButton } from '../components/SomeButton';
+import { TitleChanger } from '../components/TitleChanger';
+import { useMyHook } from '../hooks/useMyHook';
+import { IncButton } from '../components/IncBtn';
+import { Post } from '../components/Post';
 
 
 
@@ -22,39 +23,6 @@ import { useMyHook } from './hooks/useMyHook';
  * 1.3. DO NOT: call Hooks inside conditions or loops, after a conditional return statement, in event handlers, in class components, inside functions passed to useMemo, useReducer or useEffect, inside try/catch/finally blocks
  * 2. Only call Hooks from React functions (React function components or from custom Hooks)
  */
-
-const Button = ({incrementFn}) => {
-  //console.log('Btn render');
-  //After removing the count2 dependency, this function must render only once, meaning the console message is also displayed only once after initial render
-  return <button type='button' onClick={() => incrementFn(5)}>+</button>
-}
-
-Button.propTypes = {
-  incrementFn: props.func,
-}
-
-const Post = ({post, handleClick}) => {
-  return (
-    <div key={post.id} className='post'>
-      <h3 onClick={() => handleClick(post.title)}>{post.title}</h3>
-      <hr />
-      <p>{post.body}</p>
-    </div>
-  );
-}
-
-Post.propTypes = {
-  post: props.shape({
-    id: props.number,
-    title: props.string,
-    body: props.string,
-  }),
-  handleClick: props.func,
-}
-
-const eventFn = () => {
-  console.log('Element H1 was clicked.');
-};
 
 function App() {
   const [count, setCount] = useState(0);
@@ -68,6 +36,10 @@ function App() {
   //note that changing the value associated with useRef doesn't trigger another component rendering pass
 
   const rev = reverse ? 'reverse' : '';
+
+  const eventFn = () => {
+    console.log('Element H1 was clicked.');
+  };
 
   //UseCallback is useful for 'caching' functions that do not change
   const incrementCounter = useCallback((incAmount = 1) => {
@@ -120,7 +92,7 @@ function App() {
   }
 
   const incBtn = useMemo(() =>{
-    return <Button incrementFn={incrementCounter} />
+    return <IncButton incrementFn={incrementCounter} />
   },[incrementCounter]);
 
   //Another useMemo example:
