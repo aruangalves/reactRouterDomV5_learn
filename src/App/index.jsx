@@ -4,7 +4,9 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-import { AppContext } from '../contexts/AppContext';
+import { AppProvider } from '../contexts/AppContext';
+import { PostsProvider } from '../contexts/PostsContext';
+
 import { Div } from '../components/Div';
 import { Header1 } from '../components/Header1';
 import { Paragraph } from '../components/Paragraph';
@@ -12,7 +14,7 @@ import { ChangeButton, InvertButton } from '../components/SomeButton';
 import { TitleChanger } from '../components/TitleChanger';
 import { useMyHook } from '../hooks/useMyHook';
 import { IncButton } from '../components/IncBtn';
-import { Post } from '../components/Post';
+import { Posts } from '../components/Posts';
 
 
 
@@ -110,15 +112,10 @@ function App() {
     renderCounter.current++;
   });
 
-  //After you type on the search bar, without useMemo, the entire page would be re-rendered. With useMemo, React will check if the component state was updated. If not, then they're not rendered again
-  //useMemo saves the Component state, useCallback saves the function state to avoid rendering the page again
+
   const handlePostClick = (value) =>{
     setSearchValue(value);
   };
-
-  const renderedPosts = useMemo(() =>{
-    return posts.length > 0 && posts.map(post => (<Post key={post.id} post={post} handleClick={handlePostClick} />));
-  },[posts]);
 
   //Custom Hooks example
   const [cInterval, setCInterval] = useState(0);
@@ -146,49 +143,44 @@ function App() {
 
 
   return (
-    <AppContext>
-      <Div>
-        <div>
-          <Header1 />
-          <a href="https://vitejs.dev" target="_blank">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className={`logo react ${rev}`} alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <h1>App was rendered {renderCounter.current} times.</h1>
-          <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
-          <Paragraph />
-          <TitleChanger />
-          {incBtn}
-          <ChangeButton />
-          <InvertButton />
-          <h2>Counting {cInterval} at every {delay/1000} seconds</h2>
-          <button type='button' onClick={() => handleDelay(delayInc)}>Slower</button>
-          <input type='number' value={delayInc} onChange={(e)=>inputDelay(e.target.value)} min='0'></input>
-          <button type='button' onClick={() => handleDelay(-delayInc)}>Faster</button>
-          <p>Counter #2 value is: {count2}</p>
-          <h2>Another useMemo example:</h2>
-          <p>
-            <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
-          </p>
-          <div className='post-container'>
-            {renderedPosts}
+    <AppProvider>
+      <PostsProvider>
+        <Div>
+          <div>
+            <Header1 />
+            <a href="https://vitejs.dev" target="_blank">
+              <img src={viteLogo} className="logo" alt="Vite logo" />
+            </a>
+            <a href="https://react.dev" target="_blank">
+              <img src={reactLogo} className={`logo react ${rev}`} alt="React logo" />
+            </a>
           </div>
-          {posts.length === 0 &&
-            <div className='post'>
-              <p>Ainda não existem posts</p>
-            </div>
-            }
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </Div>
-    </AppContext>
+          <h1>Vite + React</h1>
+          <div className="card">
+            <h1>App was rendered {renderCounter.current} times.</h1>
+            <button type="button" onClick={handleClick}>Logo was reversed {count} time{count === 1 ? '' : 's'}</button>
+            <Paragraph />
+            <TitleChanger />
+            {incBtn}
+            <ChangeButton />
+            <InvertButton />
+            <h2>Counting {cInterval} at every {delay/1000} seconds</h2>
+            <button type='button' onClick={() => handleDelay(delayInc)}>Slower</button>
+            <input type='number' value={delayInc} onChange={(e)=>inputDelay(e.target.value)} min='0'></input>
+            <button type='button' onClick={() => handleDelay(-delayInc)}>Faster</button>
+            <p>Counter #2 value is: {count2}</p>
+            <h2>Another useMemo example:</h2>
+            <p>
+              <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
+            </p>
+            <Posts handlePostClick={handlePostClick} />
+          </div>
+          <p className="read-the-docs">
+            Click on the Vite and React logos to learn more
+          </p>
+        </Div>
+      </PostsProvider>
+    </AppProvider>
   )
 }
 
