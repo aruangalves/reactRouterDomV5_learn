@@ -36,11 +36,15 @@ export const useFetch = (url, options) =>{
 
   useEffect(()=>{
     let wait = false;
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     setLoading(true);
 
     const fetchData = async () => {
       try {
-        const response = await fetch(urlRef.current, optionsRef.current);
+        const response = await fetch(urlRef.current, {signal, ...optionsRef.current});
         const jsonResponse = await response.json();
 
         if(!wait){
@@ -53,7 +57,7 @@ export const useFetch = (url, options) =>{
         if(!wait){
           setLoading(false);
         }
-        throw error;
+        console.warn(error.message);
       }
 
     };
@@ -62,6 +66,7 @@ export const useFetch = (url, options) =>{
     //cleanup done to prevent fetching when the page components are dismounted
     return () => {
       wait = true;
+      controller.abort();
     };
   },[reload]);
 
