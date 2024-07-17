@@ -15,6 +15,7 @@ import { TitleChanger } from '../components/TitleChanger';
 import { useMyHook } from '../hooks/useMyHook';
 import { IncButton } from '../components/IncBtn';
 import { Posts } from '../components/Posts';
+import { TurnedButton, TurnedOff, TurnedOn, TurnOnOff } from '../components/TurnOnOff';
 
 
 
@@ -169,6 +170,12 @@ function App() {
             <input type='number' value={delayInc} onChange={(e)=>inputDelay(e.target.value)} min='0'></input>
             <button type='button' onClick={() => handleDelay(-delayInc)}>Faster</button>
             <p>Counter #2 value is: {count2}</p>
+            <h2>Compound Components Pattern:</h2>
+            <TurnOnOff>
+              <TurnedOn>Some meaningful text indicating that the component is ON</TurnedOn>
+              <TurnedOff>Some equally important text displaying that the component is turned OFF</TurnedOff>
+              <TurnedButton />
+            </TurnOnOff>
             <h2>Another useMemo example:</h2>
             <p>
               <input ref={searchInput} type="search" value={searchValue} onChange={(ev) => setSearchValue(ev.target.value)}></input>
