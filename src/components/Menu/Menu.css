@@ -1,0 +1,14 @@
+#main-menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 1.5rem;
+  background-color: rgba(0,0,0,0.1);
+  padding: 0.5rem;
+  margin: 0;
+}
+
+#main-menu > a {
+  font-weight: bold;
+}
